@@ -7,6 +7,7 @@ const Page = () => {
         Welcome to my SaaS app
       </h1>
       <p>hello</p>
+      <p>home</p>
     </>
   )
 }

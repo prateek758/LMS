@@ -9,9 +9,6 @@ const Page = () => {
       <a href="sign-in">
       <Button className='cursor-pointer m-2'>Sign In</Button>
       </a>
-      <a href="sign-up">
-      <Button className='cursor-pointer m-2'>Sign Up</Button>
-      </a>
     </>
   )
 }

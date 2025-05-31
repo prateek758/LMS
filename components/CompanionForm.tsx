@@ -1,6 +1,7 @@
 "use client"
  
 import { z } from "zod"
+import { Textarea } from "./ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
@@ -20,7 +21,9 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
-import { subjects } from "@/constants"
+import { subjects, voices } from "@/constants"
+import { createCompanion } from "@/lib/actions/companion.actions"
+import { redirect } from "next/navigation"
   
 
 
@@ -47,13 +50,22 @@ const CompanionForm = () => {
         },
       })
       
-      const onSubmit = (values: z.infer<typeof formSchema>) => {
-        console.log(values)
+      const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        const companion = await createCompanion(values);
+
+        if(companion){
+          redirect(`/companions/${companion.id}`);
+        }
+        else{
+            console.log('Failed to create companion')
+            redirect('/')
+        }
       }
 
   return (
      <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Companion name */}
         <FormField
           control={form.control}
           name="name"
@@ -70,6 +82,8 @@ const CompanionForm = () => {
             </FormItem>
           )}
         />
+
+         {/* Subject selection */}
         <FormField
           control={form.control}
           name="subject"
@@ -102,14 +116,16 @@ const CompanionForm = () => {
             </FormItem>
           )}
         />
+
+        {/* Specifying topics */}
         <FormField
           control={form.control}
           name="topic"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Companion Name</FormLabel>
+              <FormLabel>What should the companion help with ?</FormLabel>
               <FormControl>
-                <Input placeholder="Enter topic" 
+                <Textarea placeholder="Ex. Math" 
                 {...field} 
                 className="input"
                 />
@@ -118,39 +134,92 @@ const CompanionForm = () => {
             </FormItem>
           )}
         />
+
+        {/* Voice Types */}
         <FormField
           control={form.control}
           name="voice"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Companion Name</FormLabel>
+              <FormLabel>Voice Type</FormLabel>
               <FormControl>
-                <Input placeholder="Select voice" 
-                {...field} 
-                className="input"
-                />
+              <Select 
+              onValueChange={field.onChange}
+              value={field.value}
+              defaultValue={field.value}
+              >
+                <SelectTrigger className="input ">
+                    <SelectValue placeholder="Select Voice" />
+                </SelectTrigger>
+                <SelectContent>
+                        <SelectItem value="male">
+                            Male
+                        </SelectItem>
+                        <SelectItem value="female">
+                            Female
+                        </SelectItem>
+                </SelectContent>
+              </Select>
+
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Speaking Style */}
         <FormField
           control={form.control}
-          name="name"
+          name="style"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Companion Name</FormLabel>
+              <FormLabel>Speaking Style</FormLabel>
               <FormControl>
-                <Input placeholder="Enter companion name" 
-                {...field} 
-                className="input"
-                />
+              <Select 
+              onValueChange={field.onChange}
+              value={field.value}
+              defaultValue={field.value}
+              >
+                <SelectTrigger className="input ">
+                    <SelectValue placeholder="Select Style" />
+                </SelectTrigger>
+                <SelectContent>
+                        <SelectItem value="formal">
+                            Formal
+                        </SelectItem>
+                        <SelectItem value="informal">
+                            Informal
+                        </SelectItem>
+                </SelectContent>
+              </Select>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+
+        <FormField
+          control={form.control}
+          name="duration"
+          render={({ field }) => (
+              <FormItem>
+                <FormLabel>Estimated session duration in minutes</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="15"
+                      {...field}
+                      className="input"
+                    />
+                  </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+        <Button type="submit" className="w-full cursor-pointer">
+          Build Your Companion
+        </Button>
       </form>
     </Form>
   )

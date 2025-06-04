@@ -5,6 +5,7 @@ export const subjects = [
   "history",
   "coding",
   "economics",
+  "stock market"
 ];
 
 export const subjectsColors = {

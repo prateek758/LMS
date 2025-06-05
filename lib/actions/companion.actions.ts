@@ -110,7 +110,7 @@ export const getUserCompanions = async (userId: string) => {
 export const newCompanionPermissions = async () => {
     const { userId, has } = await auth();
     const supabase = createSupabaseClient();
-
+    
     let limit = 0;
 
     if(has({ plan: 'pro' })) {
